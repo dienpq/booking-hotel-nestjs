@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,10 @@ export class AuthService {
   }
 
   async validateUser(account: string, password: string): Promise<any> {
-    const user = await this.userService.getUser();
+    const user = await this.userService.getUser({
+      account,
+      password,
+    });
 
     if (user && user.password === password) {
       const { password, ...rest } = user;
@@ -26,6 +30,22 @@ export class AuthService {
     } else {
       throw new BadRequestException('Incorrect account or password');
     }
+  }
+
+  async register(registerDto: RegisterDto) {
+    const user = await this.userService.getUser({
+      account: registerDto.account,
+    });
+
+    if (user) {
+      throw new BadRequestException('User exist already');
+    }
+    const newUser = await this.userService.createUser(registerDto);
+    const token = await this.createToken({ ...newUser });
+    return {
+      profile: newUser,
+      ...token,
+    };
   }
 
   async login(loginDto: LoginDto) {
