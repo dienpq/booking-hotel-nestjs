@@ -8,6 +8,7 @@ import { RoomModule } from './room/room.module';
 import { CaptionModule } from './caption/caption.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -20,6 +21,12 @@ import { UserModule } from './user/user.module';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: HotelModule,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

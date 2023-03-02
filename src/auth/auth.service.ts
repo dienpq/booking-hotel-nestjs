@@ -41,7 +41,12 @@ export class AuthService {
       throw new BadRequestException('User exist already');
     }
     const newUser = await this.userService.createUser(registerDto);
-    const token = await this.createToken({ ...newUser });
+
+    const token = await this.createToken({
+      username: newUser.username,
+      account: newUser.account,
+      role: newUser.role,
+    });
     return {
       profile: newUser,
       ...token,
@@ -53,7 +58,11 @@ export class AuthService {
       loginDto.account,
       loginDto.password,
     );
-    const token = await this.createToken(userLogin);
+    const token = await this.createToken({
+      username: userLogin.username,
+      account: userLogin.account,
+      role: userLogin.role,
+    });
     return {
       profile: userLogin._doc,
       ...token,

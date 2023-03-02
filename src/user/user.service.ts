@@ -15,7 +15,7 @@ export class UserService {
   }
 
   async getUser(payload: object) {
-    const user = this.userModel.findOne(payload);
+    const user = await this.userModel.findOne(payload);
     return user;
   }
 
